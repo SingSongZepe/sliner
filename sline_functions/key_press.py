@@ -40,6 +40,11 @@ def key_press(self: 'SLINE', eve: QKeyEvent) -> None:
     elif eve.key() == Qt.Key.Key_A:
         self.toggle_mode(Mode.Arc)
         return
+    elif eve.key() == Qt.Key.Key_T:
+        self.toggle_mode(Mode.Trim)
+    elif eve.key() == Qt.Key.Key_D:
+        self.toggle_mode(Mode.Delete)
+        return
     
     # no key shortcut
     if not (eve.modifiers() & Qt.KeyboardModifier.ControlModifier or eve.modifiers() & Qt.KeyboardModifier.ShiftModifier): 

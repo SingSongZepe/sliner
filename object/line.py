@@ -2,6 +2,7 @@ from typing import overload
 import math
 import numpy as np
 
+from err.parameter import ParameterNotCorrectError
 from object.point import PointF
 from value.value import *
 
@@ -17,14 +18,25 @@ class LineF:
             if isinstance(args[0], PointF) and isinstance(args[1], PointF):
                 self.p1 = args[0]
                 self.p2 = args[1]
+                self.cal_points()
                 return
             raise TypeError('Line receive two points as its position')
         elif len(args) == 4:
             self.p1 = PointF(args[0], args[1])
             self.p2 = PointF(args[2], args[3])
+            self.cal_points()
+        else:
+            raise ParameterNotCorrectError('error number of arguments not correct')
+
+    
+    def cal_points(self) -> None:
+        self.points = [self.p1, self.p2]
     
     def __eq__(self, line: 'LineF') -> bool:
         return self.p1 == line.p1 and self.p2 == line.p2
+
+    def __ne__(self, line: 'LineF') -> bool:
+        return not self.__eq__(line)
     
     def near(self: 'LineF', point: PointF) -> bool:
         return abs((self.p2.y - self.p1.y) * point.x - (self.p2.x - self.p1.x) * point.y + self.p2.x * self.p1.y - self.p2.y * self.p1.x) / math.sqrt((self.p2.y - self.p1.y) ** 2 + (self.p2.x - self.p1.x) ** 2) <= near_length if (self.p2.y - self.p1.y) ** 2 + (self.p2.x - self.p1.x) ** 2 != 0 else False
@@ -33,8 +45,20 @@ class LineF:
         angle_deg = math.degrees(math.atan2(self.p2.y - self.p1.y, self.p2.x - self.p1.x))
         return angle_deg if angle_deg >= 0 else angle_deg + 360
 
-    def k(self) -> float:
-        return (self.p2.y - self.p1.y) / (self.p2.x - self.p1.x) if self.p2.x - self.p1.x != 0 else '' # '' not equals to False
+    def k(self) -> float | None:
+        return (self.p2.y - self.p1.y) / (self.p2.x - self.p1.x) if self.p2.x - self.p1.x != 0 else None # None not equals to False
+    
+    def yx(self, x: float) -> float:
+        return self.k() * (x - self.p1.x) + self.p1.y if self.k() is not None else None
+    
+    def rect(self) -> 'RectF':
+        from object.rect import RectF
+        return RectF(self.p1, self.p2)
+
+    def on_segment(self, point: PointF) -> bool:
+        if self.k() is None:
+            return point.y > min(self.p1.y, self.p2.y) and point.y < max(self.p1.y, self.p2.y)
+        return point.x > min(self.p1.x, self.p2.x) and point.x < max(self.p1.x, self.p2.x)
     
     # this method is not that good to check whether perpendicular between two lines
     # def perpendicular(self: 'LineF', line: 'LineF') -> bool:
@@ -84,10 +108,8 @@ class LineF:
             y0 = point.y
             x1 = self.p1.x
             y1 = self.p1.y
-            x2 = self.p2.x
-            y2 = self.p2.y
 
-            k = (y2 - y1) / (x2 - x1) # when slope is zero
+            k = self.k() # when slope is zero
             x = (x0 - x1) / (k * k + 1) + k * (y0 - y1) / (k * k + 1) + x1
             y = k * (x0 - x1) / (k * k + 1) + (k * k * y0 + y1) / (k * k + 1)
         return PointF(x, y)
@@ -96,7 +118,7 @@ class LineF:
     def get_parallel_point(self: 'LineF', p: PointF, point: PointF) -> PointF:
         # p1 is the first point that users selected
         # point the mouse pos
-        if self.k() == '':
+        if self.k() is None:
             return PointF(p.x, point.y)
         elif self.k() == 0.0:
             return PointF(point.x, p.y)
@@ -105,13 +127,29 @@ class LineF:
             # or
             # return LineF(p, PointF((point.y - p.y) / self.k() + p.x, point.y)).get_perpendicular_point(point)
 
+    # 
+    def intersect(self: 'LineF', line: 'LineF') -> bool:
+        if not self.rect().intersect(line.rect()):
+            return False
+        return True if self.get_intersect_point(line) else False
+
+    def get_intersect_point(self: 'LineF', line: 'LineF') -> PointF | bool:
+        if self.k() == line.k():
+            return False
+        elif self.k() is None:
+            return PointF(self.p1.x, line.yx(self.p1.x)) if line.on_segment(PointF(self.p1.x, line.yx(self.p1.x))) else False
+        elif line.k() is None:
+            return PointF(line.p1.x, self.yx(line.p1.x)) if self.on_segment(PointF(line.p1.x, self.yx(line.p1.x))) else False
+        x = (line.k() * line.p1.x - line.p1.y - self.k() * self.p1.x + self.p1.y) / (line.k() - self.k())
+        y = (self.k() * line.k() * (line.p1.x - self.p1.x) + line.k() * self.p1.y - self.k() * line.p1.y) / (line.k() - self.k())
+        return PointF(x, y) if self.on_segment(PointF(x, y)) else False
 
     # ? no deviation judgement
-    def horizontal(self: 'LineF') -> PointF:
-        return self.k() == ''
+    def horizontal(self: 'LineF') -> bool:
+        return self.k() == 0.0 
 
     def get_horizontal_point(self: 'LineF', point: PointF) -> PointF | bool:
-        if self.k() == '':
+        if self.k() is None:
             return PointF(self.p1.x, point.y)
         elif self.k() == 0.0:
             return False  # horizontal point not exists
@@ -119,11 +157,11 @@ class LineF:
             return PointF((point.y - self.p1.y) / self.k() + self.p1.x, point.y)
         
     # ? no deviation judgement
-    def vertical(self: 'LineF') -> PointF:
-        return self.k() == 0.0
+    def vertical(self: 'LineF') -> bool:
+        return self.k() is None
     
     def get_vertical_point(self: 'LineF', point: PointF) -> PointF | bool:
-        if self.k() == '':
+        if self.k() is None:
             return False
         elif self.k() == 0.0:
             return PointF(point.x, self.p1.y)

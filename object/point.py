@@ -1,6 +1,7 @@
 from typing import overload
 import math
 
+from err.parameter import ParameterNotCorrectError
 from object.color import Color
 from value.strings import default_color
 from value.value import near_length, angle_threshold
@@ -23,6 +24,8 @@ class PointF:
             self.color: Color = Color(args[2])
         elif isinstance(args[2], Color):
             self.color: Color = args[2]
+        else:
+            raise ParameterNotCorrectError('error number of arguments not correct')
 
     def __add__(self, other: 'PointF') -> 'PointF':
         return PointF(self.x + other.x, self.y + other.y)

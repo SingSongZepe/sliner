@@ -5,6 +5,7 @@ if typing.TYPE_CHECKING:
 from event.draw_point_event import DrawPointEvent
 from event.draw_line_event import DrawLineEvent
 from event.delete_event_event import DeleteEventEvent
+from event.trim_event import TrimEvent
 from utils.common.log import *
 
 def undo(self: 'SLINE'):
@@ -24,7 +25,11 @@ def undo(self: 'SLINE'):
                     self.gv_graphics.scene().addItem(dw.item)
                 elif isinstance(dw, DrawLineEvent):
                     self.graphics_lines.append(dw.line)
-                    self.gv_graphics.scene().addItem(dw.item)    
+                    self.gv_graphics.scene().addItem(dw.item)
+        # there if draw_line_event that trim_event contains, they may be already deleted by delete_event_event.
+        # so there you just throw those event whose item is empty in GraphicsScene
+        elif isinstance(draw_event, TrimEvent):
+            ln('trim event!')
         self.redo_stack.append(draw_event)
 
         ln('undo draw one or more graphics done')

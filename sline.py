@@ -60,6 +60,16 @@ class SLINE(QMainWindow, Ui_MainWindow):
     from functions.clear_assist import clear_assist
     from functions.undo import undo
     from functions.redo import redo
+    
+    # ! process
+    from process.point.process_point import process_point
+    from process.point.process_assist_point import process_assist_point
+    from process.line.process_line import process_line
+    from process.line.process_assist_line import process_assist_line
+    from process.trim.process_trim import process_trim
+
+    # ! indicator
+    from indicator.indicate_mouse_pos import indicate_mouse_pos
 
     def __init__(self) -> None:
         super(SLINE, self).__init__()
@@ -72,6 +82,8 @@ class SLINE(QMainWindow, Ui_MainWindow):
         self.lb_point.setPixmap(QPixmap(pic_path_point))
         self.lb_line.setPixmap(QPixmap(pic_path_line))
         self.lb_arc.setPixmap(QPixmap(pic_path_arc_by_center))
+        self.lb_trim.setPixmap(QPixmap(pic_path_trim))
+        self.lb_delete.setPixmap(QPixmap(pic_path_delete))
 
         # graphics
         self.gv_graphics = QGraphicsView()
@@ -110,6 +122,10 @@ class SLINE(QMainWindow, Ui_MainWindow):
         self.lb_line.mousePressEvent = lambda _: self.toggle_mode(Mode.Line)
         self.lb_arc.setCursor(Qt.CursorShape.PointingHandCursor)
         self.lb_arc.mousePressEvent = lambda _: self.toggle_mode(Mode.Arc)
+        self.lb_trim.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.lb_trim.mousePressEvent = lambda _: self.toggle_mode(Mode.Trim)
+        self.lb_delete.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.lb_delete.mousePressEvent = lambda _: self.toggle_mode(Mode.Delete)
         
         # data init
         self.__other_init__()

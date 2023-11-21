@@ -26,3 +26,6 @@ ASSIST_FONT_FAMILY = 'Arial'
 
 LENf = 'len: {}'
 ARGf = 'arg: {}°'
+
+# pos indicator
+POS_INDICATORf2 = 'x:{} y:{}'

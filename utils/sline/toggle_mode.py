@@ -20,4 +20,9 @@ def toggle_mode(self: 'SLINE', mode: Mode):
         self.gv_graphics.scene().removeItem(item)
     self.selected_graphics_item.cls()
 
+    if Mode.eq(self.mode, Mode.Delete):    
+        self.change_to_default()
+        delete_event_event = self.delete_event()
+        self.undo_stack.append(delete_event_event)
+
     ln('toggle to mode ' + Mode.string(mode))

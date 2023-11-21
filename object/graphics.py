@@ -72,6 +72,12 @@ class GraphicsLines(GraphicsObjects):
             if l.parallel(line):
                 return l
         return False
-            
+    
+    def intersect_point_list(self, line: LineF) -> typing.List[PointF]:
+        intersect_points: typing.List[PointF] = []
+        for l in self.graphics_lines:
+            if l.intersect(line):
+                intersect_points.append(l.get_intersect_point(line))
+        return intersect_points
 
     

@@ -5,8 +5,10 @@ from enum import Enum
 class Mode(Enum):
     Emp = 0     # just mouse
     Point = 1
-    Line = 2   # create a line
+    Line = 2    # create a line
     Arc = 3     # create a arc
+    Trim = 4    # trim line
+    Delete = 5  # delete
 
     def eq(mode1: 'Mode', mode2: 'Mode') -> bool:
         return mode1 == mode2
@@ -20,4 +22,8 @@ class Mode(Enum):
             return 'Line'
         elif mode == Mode.Arc:
             return 'Arc'
+        elif mode == Mode.Trim:
+            return 'Trim'
+        elif mode == Mode.Delete:
+            return 'Delete'
         raise TypeError('Unknown kind of mode')
