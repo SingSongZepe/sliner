@@ -14,6 +14,8 @@ class ConstrainCondition(enum.Enum):
     HorizontalInLine = 6
     VerticalInLine = 7
     Parallel = 8
+    ParallelIsoLength = 9
+    AngleToHV = 10
 
 class Constrained:
     pass

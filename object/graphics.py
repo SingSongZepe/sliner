@@ -19,7 +19,7 @@ class GraphicsPoints(GraphicsObjects):
         # using p == point
         # you needed to implement __eq__ function first
         return any(p for p in self.graphics_points if p == point)
-    def get(self, point: PointF) -> bool:
+    def get(self, point: PointF) -> PointF | bool:
         return next((p for p in self.graphics_points if p == point), False)
     
     # O(n)
@@ -53,6 +53,14 @@ class GraphicsLines(GraphicsObjects):
     def near_which_line(self, pos: PointF) -> LineF | bool:
         for l in self.graphics_lines:
             if l.near(pos):
+                return l
+        return False
+    
+    def near_a_segment(self, pos: PointF) -> bool:
+        return any(line.near(pos) and line.on_segment(pos) for line in self.graphics_lines)
+    def near_which_segment(self, pos: PointF) -> LineF | bool:
+        for l in self.graphics_lines:
+            if l.near(pos) and l.on_segment(pos):
                 return l
         return False
     

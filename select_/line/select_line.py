@@ -6,4 +6,4 @@ from object.point import PointF
 from object.line import LineF
 
 def select_line(self: 'SLINE', point: PointF) -> LineF:
-    return self.graphics_lines.near_which_line(point)
+    return self.graphics_lines.near_which_segment(point)

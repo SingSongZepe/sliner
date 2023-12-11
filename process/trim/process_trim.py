@@ -4,7 +4,7 @@ if typing.TYPE_CHECKING:
     from sline import SLINE
 from object.point import PointF
 from object.line import LineF
-from event.delete_event_event import DeleteEventEvent
+
 from event.draw_line_event import DrawLineEvent
 from event.trim_event import TrimEvent
 from utils.common.log import *
@@ -58,22 +58,28 @@ def process_trim(self: 'SLINE', point: PointF):
             # append
             self.selected_events.append(draw_line_event)
             delete_event_event = self.delete_event()
-            draw_line_events = []
+            draw_events = []
             if tpoint != tp_:
                 line_item = self.draw_line(tpoint, tp_)
                 line = LineF(tpoint, tp_)
-                draw_line_events.append(DrawLineEvent(line, line_item))
+                draw_events.append(DrawLineEvent(line, line_item))
                 self.graphics_lines.append(line)
+                
+                # draw line, don't draw_point, but add its point into the graphics_points
+                self.graphics_points.append(tpoint)
             if bpoint != bp_:
                 line_item = self.draw_line(bpoint, bp_)
                 line = LineF(bpoint, bp_)
-                draw_line_events.append(DrawLineEvent(line, line_item))
+                draw_events.append(DrawLineEvent(line, line_item))
                 self.graphics_lines.append(line)
-            for draw_line_event in draw_line_events:
+
+                # draw line, don't draw_point, but add its point into the graphics_points
+                self.graphics_points.append(bpoint)
+            for draw_line_event in draw_events:
                 self.undo_stack.append(draw_line_event)
             trim_event = TrimEvent(
                 delete_event_event=delete_event_event,
-                draw_events=draw_line_events,
+                draw_events=draw_events,
             )
             self.undo_stack.append(trim_event)
 

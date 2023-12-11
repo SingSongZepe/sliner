@@ -26,6 +26,12 @@ def process_assist_line(self: 'SLINE', point: PointF) -> None:
     elif constrained_point.condition == ConstrainCondition.Parallel:
         text_assist_item = self.draw_assist_parallel((self.selected_graphics_object.all()[0] + point) / 2)
         self.assist_graphics_item.append(text_assist_item)
+    elif constrained_point.condition == ConstrainCondition.ParallelIsoLength:
+        text_assist_item = self.draw_assist_parallel((self.selected_graphics_object.all()[0] + point) / 2)
+        self.assist_graphics_item.append(text_assist_item)
+        # 1 is the point
+        line_assist_item = self.draw_assist_line(point, constrained_point.constrained_by[1])
+        self.assist_graphics_item.append(line_assist_item)
 
     # meet the condition of constructing a assist line
     if self.selected_graphics_object.for_assist_line():

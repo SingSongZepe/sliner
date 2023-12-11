@@ -60,6 +60,16 @@ class SLINE(QMainWindow, Ui_MainWindow):
     from functions.clear_assist import clear_assist
     from functions.undo import undo
     from functions.redo import redo
+        # undo draw_event
+    from functions.undo_.undo_draw_point import undo_draw_point
+    from functions.undo_.undo_draw_line import undo_draw_line
+    from functions.undo_.undo_delete_event import undo_delete_event
+    from functions.undo_.undo_trim import undo_trim
+        # redo draw_event
+    from functions.redo_.redo_draw_point import redo_draw_point
+    from functions.redo_.redo_draw_line import redo_draw_line
+    from functions.redo_.redo_delete_event import redo_delete_event
+    from functions.redo_.redo_trim import redo_trim
     
     # ! process
     from process.point.process_point import process_point

@@ -12,10 +12,12 @@ from PySide6.QtCore import Qt
 def key_press(self: 'SLINE', eve: QKeyEvent) -> None:
     # undo
     if eve.key() == Qt.Key.Key_Z and eve.modifiers() & Qt.KeyboardModifier.ControlModifier:
+        self.unselect()
         self.undo()
         return
     # redo
     elif eve.key() == Qt.Key.Key_Y and eve.modifiers() & Qt.KeyboardModifier.ControlModifier:
+        self.unselect()
         self.redo()
         return
     # unselect

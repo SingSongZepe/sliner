@@ -27,7 +27,6 @@ class LineF:
             self.cal_points()
         else:
             raise ParameterNotCorrectError('error number of arguments not correct')
-
     
     def cal_points(self) -> None:
         self.points = [self.p1, self.p2]
@@ -127,6 +126,15 @@ class LineF:
             # or
             # return LineF(p, PointF((point.y - p.y) / self.k() + p.x, point.y)).get_perpendicular_point(point)
 
+    def get_parallel_isolength_point(self: 'LineF', p_: PointF, p: PointF) -> PointF:
+        # p_ self point
+        # p another point
+
+        # ??? what this skills?
+        line = LineF(p, p_)
+        line.k = lambda : self.k()
+        return line.get_perpendicular_point(p_)
+
     # 
     def intersect(self: 'LineF', line: 'LineF') -> bool:
         if not self.rect().intersect(line.rect()):
@@ -167,4 +175,24 @@ class LineF:
             return PointF(point.x, self.p1.y)
         else:
             return PointF(point.x, self.k() * (point.x - self.p1.x) + self.p1.y)
+    
+    # angle when no other constrained
+    # the first point of the line is "based point"
+    # the second point of the line is "to set point"
+    def get_integer_ang_point(self) -> PointF:
+        if self.k() is None or self.k() == 0.0:
+            return self.p2
+        ang = self.ang() // 1 # integer angle
+        print(ang)
+        if ang % 90 == 0.0:
+            return self.p2
+
+        k = math.tan(ang * math.pi / 180)
+        y1 = k * (self.p2.x - self.p1.x) + self.p1.y
+        x2 = (self.p2.y - self.p1.y) / k + self.p1.x
+
+        if math.fabs(y1 - self.p2.y) < math.fabs(x2 - self.p2.x):
+            return PointF(self.p2.x, y1)
+        else:
+            return PointF(x2, self.p2.y)
         

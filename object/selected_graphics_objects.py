@@ -29,3 +29,4 @@ class SelectedGraphicsObjects:
 
     def get_objects(self, num: int) -> typing.List[PointF | LineF]:
         return [self.selected_graphics_objects[i] for i in range(num)] if isinstance(num, int) else []
+        
